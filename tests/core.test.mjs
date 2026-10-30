@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {hashPassword,verifyPassword,balanceAfter,validPassword,uuid} from '../netlify/functions/core.mjs';
+test('contraseñas: salt y verificación',()=>{const h=hashPassword('ClaveRaidenSegura123');assert.ok(verifyPassword('ClaveRaidenSegura123',h));assert.equal(verifyPassword('otra',h),false);assert.notEqual(hashPassword('ClaveRaidenSegura123'),h);assert.equal(verifyPassword('x','roto'),false);assert.equal(validPassword('corta'),false);});
+test('saldo suficiente, exacto y validación',()=>{assert.equal(balanceAfter(18000,1000),17000);assert.equal(balanceAfter(1000,1000),0);for(const p of [0,-1,1.5,NaN,Infinity])assert.throws(()=>balanceAfter(100,p));assert.throws(()=>balanceAfter(999,1000));assert.throws(()=>balanceAfter(NaN,1000));});
+test('identificadores',()=>{assert.equal(uuid('hola'),false);assert.ok(uuid('12345678-1234-1234-1234-123456789abc'));});
