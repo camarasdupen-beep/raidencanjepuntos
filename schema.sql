@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS users(id uuid PRIMARY KEY, username text UNIQUE NOT NULL, name text NOT NULL, password text NOT NULL, role text NOT NULL CHECK(role IN ('admin','employee')),active boolean NOT NULL DEFAULT true);
+CREATE TABLE IF NOT EXISTS sessions(token text PRIMARY KEY,user_id uuid REFERENCES users(id),expires timestamptz NOT NULL);
+CREATE TABLE IF NOT EXISTS rewards(id uuid PRIMARY KEY,title text NOT NULL,points integer NOT NULL CHECK(points>0),instruction text NOT NULL,active boolean NOT NULL DEFAULT true);
+CREATE TABLE IF NOT EXISTS redemptions(id uuid PRIMARY KEY,customer_id text NOT NULL,customer_name text NOT NULL,reward_id uuid REFERENCES rewards(id),reward_title text NOT NULL,points integer NOT NULL,before_points numeric NOT NULL,after_points numeric NOT NULL,instruction text NOT NULL,user_id uuid REFERENCES users(id),status text NOT NULL CHECK(status IN ('pending','completed','review','failed')),created_at timestamptz NOT NULL DEFAULT now(),resolution text);
+CREATE UNIQUE INDEX IF NOT EXISTS one_unresolved_customer ON redemptions(customer_id) WHERE status IN ('pending','review');
+CREATE TABLE IF NOT EXISTS login_attempts(key text PRIMARY KEY,attempts integer NOT NULL,reset_at timestamptz NOT NULL);
